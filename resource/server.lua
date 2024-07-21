@@ -1,4 +1,4 @@
-local success, result = pcall(MySQL.scalar.await, 'SELECT 1 FROM stevo_dmv_licenses')
+local success, result = pcall(MySQL.scalar.await, 'SELECT 1 FROM stevo_drugsell_rep')
 
 if not success then
     MySQL.query([[CREATE TABLE IF NOT EXISTS `stevo_drugsell_rep` (
