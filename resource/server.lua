@@ -5,7 +5,6 @@ if not success then
     `id` INT NOT NULL AUTO_INCREMENT,
     `owner` VARCHAR(50) NOT NULL,
     `rep` INT NOT NULL,
-    `stats` TEXT NOT NULL,
     PRIMARY KEY (`id`),
     UNIQUE KEY `owner` (`owner`)
     )]])
