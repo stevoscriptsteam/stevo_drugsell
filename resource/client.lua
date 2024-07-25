@@ -231,7 +231,7 @@ function attempt_sell(entity)
 		ped_cooldown(buyer_ped)
 
 	else
-		if Config.callpoliceondeny then police_dispatch() end
+		if Config.police.callpoliceondeny then police_dispatch() end
 		ped_cooldown(buyer_ped)
 		PlayPedAmbientSpeechNative(buyer_ped, "GENERIC_FRIGHTENED_HIGH", "SPEECH_PARAMS_FORCE_SHOUTED")
 		TaskSmartFleePed(buyer_ped, PlayerPedId(), 10000.0, -1)
