@@ -1,0 +1,12 @@
+{
+    "master_selling" : "Has dominado la venta de drogas",
+    
+    "no_police" : "¡No hay suficientes policías para vender!",
+
+    "progress_label" : "Cerrando un trato...",
+
+    "failed_sale" : "¡No quiero tus drogas!",
+
+    "sale_amount" : "Vendido x",
+    "sale_price" : " por $"
+}

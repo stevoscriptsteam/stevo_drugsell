@@ -1,19 +1,23 @@
-## stevo_drugsell - 1.0.0
-Most advanced free drug selling resource
+# stevo_drugsell
+## Advanced drug selling resource, allowing you to make sales to anyone, anywhere! 💊💵
 
+You can customise this script to suit your needs, allowing for the sale of multiple drugs at one time, police alerts, price multipliers based on the number of officers on duty... and much more!
 
-- Reputation system
-- Exploit Protection
-- Highly Configurable
-- Police Dispatching
-- 100% Optimized
-- Supports QB & OX Target & markers
-- Supports ESX, QBCore, Qbox, Ox Core
+- Supports ESX, Qbox and QBCore.
+- Supports all inventories.
+- Supports ox_target, qb-target and markers.
 
-Preview: https://youtu.be/nmMr3Y0QKXw?si=sY0talBtUiRlEyOd
+**Preview video:** [Click Here](https://youtu.be/nmMr3Y0QKXw?si=MklbySZP72auRfhR)
 <br>
-Documentation: https://docs.stevoscripts.com/free-scripts/stevo_drugsell
+**View documentation:** [Click Here](https://docs.stevoscripts.com/free-scripts/stevo_drugsell)
+
+> Dependencies:
+> <br>
+> [stevo_lib](https://github.com/stevoscriptsteam/stevo_lib)
+> <br>
+> [ox_lib](https://github.com/overextended/ox_lib)
+
+## StevoScripts
+Check out our paid resources: [Store](https://store.stevoscripts.com/)
 <br>
-Discord: https://discord.gg/stevoscripts
-<br>
-Website: https://www.stevoscripts.com
+Join the Discord: [Discord](https://discord.gg/stevoscripts)
