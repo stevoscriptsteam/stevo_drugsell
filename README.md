@@ -3,6 +3,8 @@
 
 You can customise this script to suit your needs, allowing for the sale of multiple drugs at one time, police alerts, price multipliers based on the number of officers on duty... and much more!
 
+The built in reputation system allows you to compete with friends to become the best dealer in the city!
+
 - Supports ESX, Qbox and QBCore.
 - Supports all inventories.
 - Supports ox_target, qb-target and markers.
