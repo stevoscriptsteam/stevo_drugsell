@@ -1,14 +1,16 @@
-local Config = lib.require('config')
+local config = lib.require('config')
 local stevo_lib = exports['stevo_lib']:import()
+lib.locale()
 
 
 function police_dispatch()
 	--- Police Dispatch Here.
 end
 
+
 function does_have_drugs()
 	local has_drugs = false
-	for item, itemInfo in pairs(Config.drugs) do
+	for item, itemInfo in pairs(config.drugs) do
 		local count = exports.ox_inventory:Search('count', item)
 		if count >= 1 then
 			has_drugs = true
@@ -18,11 +20,12 @@ function does_have_drugs()
 	return has_drugs
 end
 
+
 function prepare_buyer_offer()
     local buyer_offer = nil
 
 
-    for item, itemInfo in pairs(Config.drugs) do
+    for item, itemInfo in pairs(config.drugs) do
         if buyer_offer ~= nil then
             break
         end
@@ -30,7 +33,6 @@ function prepare_buyer_offer()
         local base_price = itemInfo.base_price
         local max_sale = itemInfo.max_sale
         local count = exports.ox_inventory:Search('count', item)
-
 
         if count >= 1 then
             if count > max_sale then 
@@ -47,21 +49,18 @@ function prepare_buyer_offer()
             }
         end
     end
-
     return buyer_offer
 end
 
+
 function ped_cooldown(entity)
-
 	Entity(entity).state:set('stevo_drugcooldown', true, true) 
-
-
-    Citizen.SetTimeout(Config.buyer_cooldown, function()
+    Citizen.SetTimeout(config.buyer_cooldown, function()
         if not entity then return end
         Entity(entity).state:set('stevo_drugcooldown', false, true) 
     end)
-
 end
+
 
 function can_ped_buy(closestPed)
 	if IsEntityDead(closestPed) then return false end 
@@ -78,25 +77,24 @@ function can_ped_buy(closestPed)
     end
 end
 
+
 function show_player_reputation(current_reputation)
-    local current_replevel = Config.reps[1] 
+    local current_replevel = config.reps[1] 
     local next_level = nil
-	local total_reps = tonumber(#Config.reps)
+	local total_reps = tonumber(#config.reps)
 	local next_level_index = 0
 	local completed_reputation = false
 
-    for i, rep in ipairs(Config.reps) do
+    for i, rep in ipairs(config.reps) do
 		if next_level_index >= total_reps then completed_reputation = true break end
         if current_reputation >= rep.min_reputation then
             current_replevel = rep
-            next_level = Config.reps[i + 1]
+            next_level = config.reps[i + 1]
 			next_level_index = i + 1
         else
             break
         end
     end
-
-	
 
 	if not completed_reputation then 
 		local current_min_reputation = current_replevel.min_reputation
@@ -106,20 +104,20 @@ function show_player_reputation(current_reputation)
 		local percentage_complete = math.floor((reputation_progress / reputation_range) * 100)
 		stevo_lib.Notify(('%s (%d%% Complete)'):format(current_replevel.label, percentage_complete), 'info', 5000)
 	else
-		stevo_lib.Notify('You have mastered drug selling', 'info', 5000)
+		stevo_lib.Notify(locale('master_selling'), 'info', 5000)
 	end
 end
 
+
 function reputation_menu()
 	local current_reputation, player_name = lib.callback.await('stevo_drugsell:getReputation', false)
-	local current_replevel = Config.reps[1] 
+	local current_replevel = config.reps[1] 
     local next_level = nil
 
-	
-    for i, rep in ipairs(Config.reps) do
+    for i, rep in ipairs(config.reps) do
         if current_reputation >= rep.min_reputation then
             current_replevel = rep
-            next_level = Config.reps[i + 1]
+            next_level = config.reps[i + 1]
         else
             break
         end
@@ -130,6 +128,7 @@ function reputation_menu()
     local reputation_range = next_min_reputation - current_min_reputation
     local reputation_progress = current_reputation - current_min_reputation
     local percentage_complete = math.floor((reputation_progress / reputation_range) * 100)
+
 	lib.registerContext({
 		id = 'reputation_menu',
 		title = player_name.."'s Rep",
@@ -144,8 +143,8 @@ function reputation_menu()
 	  })
 	  lib.showContext('reputation_menu')
 end
+RegisterCommand(config.rep_command, reputation_menu)
 
-RegisterCommand('checkrep', reputation_menu)
 
 function sale_anim(buyer_ped, player)
 
@@ -176,9 +175,9 @@ function sale_anim(buyer_ped, player)
 	RemovePedElegantly(buyer_ped)
 end
 
+
 function attempt_sell(entity)
 
-	
 	local buyer_ped = entity
 
 	local cooldown = Entity(buyer_ped).state.stevo_drugcooldown
@@ -186,41 +185,30 @@ function attempt_sell(entity)
 
 	ClearPedTasks(buyer_ped)
 
-	local sellChance = {
-        max = 100,
-        min = 0,
-        chance = 50, 
-    },
-
-
 	math.randomseed(GetGameTimer())
 
-	local chance = math.random(sellChance.min, sellChance.max)
+	local chance = math.random(config.sellChance.min, config.sellChance.max)
 
-
-
-	if chance <= sellChance.chance then
+	if chance <= config.sellChance.chance then
 		TaskSetBlockingOfNonTemporaryEvents(buyer_ped, true)
 		TaskTurnPedToFaceEntity(buyer_ped, cache.ped, -1)
 
 		Wait(500)
 		
-
 		PlayPedAmbientSpeechNative(buyer_ped, "GENERIC_HI", "SPEECH_PARAMS_FORCE_NORMAL")
 
 		local data = prepare_buyer_offer()
-
 
 		sale_anim(buyer_ped, PlayerPedId())
 		
 		local attempted_sale, level_up, current_reputation, msg = lib.callback.await('stevo_drugsell:sale', false, data)
 
-		if Config.police.require and attempted_sale == 'nopol' then 
-			stevo_lib.Notify('Not enough police to sell!', 'error', 5000)
+		if config.police.require and attempted_sale == 'nopol' then 
+			stevo_lib.Notify(locale('no_police'), 'error', 5000)
 			return
 		end
 			
-		stevo_lib.Notify('Sold x'..data.count..' for $'..attempted_sale, 'success', 5000)
+		stevo_lib.Notify(locale('sale_amount')..data.count..(locale('sale_price'))..attempted_sale, 'success', 5000)
 
 		if level_up then 
 			stevo_lib.Notify(msg, 'info', 5000)
@@ -231,26 +219,28 @@ function attempt_sell(entity)
 		ped_cooldown(buyer_ped)
 
 	else
-		if Config.police.callpoliceondeny then police_dispatch() end
+		if config.police.callpoliceondeny then 
+			police_dispatch() 
+		end
+
 		ped_cooldown(buyer_ped)
 		PlayPedAmbientSpeechNative(buyer_ped, "GENERIC_FRIGHTENED_HIGH", "SPEECH_PARAMS_FORCE_SHOUTED")
 		TaskSmartFleePed(buyer_ped, PlayerPedId(), 10000.0, -1)
+
+		stevo_lib.Notify(locale('failed_sale'), 'error', 5000)
 	end
-	
 end
 
+
 CreateThread(function()
-
-
-	if Config.interaction.type == 'target' then
-
+	if config.interaction.type == 'target' then
 		local options = {
 			options = {
 				{
 					name = 'stevo_drugsell:sell',
-					icon = Config.interaction.targeticon,
-					label = Config.interaction.targetlabel,
-					distance = Config.interaction.targetdistance,
+					icon = config.interaction.targeticon,
+					label = config.interaction.targetlabel,
+					distance = config.interaction.targetdistance,
 					action = attempt_sell,
 					canInteract = function(entity)
 						return does_have_drugs() and can_ped_buy(entity)
@@ -259,13 +249,10 @@ CreateThread(function()
 			},
 			distance = 5,
 			rotation = vec3(0.0,0.0,0.0)
-
 		}
-
 		stevo_lib.target.addGlobalPed('drugselling_global', options)
 	end
-
-	if Config.interaction.type == '3dtext' then
+	if config.interaction.type == '3dtext' then
 		local function drawPedText(coords)
 			local onScreen, _x, _y = World3dToScreen2d(coords.x, coords.y, coords.z+1)
 		
@@ -277,11 +264,10 @@ CreateThread(function()
 				SetTextOutline()
 				SetTextEntry("STRING")
 				SetTextCentre(true)
-				AddTextComponentString(Config.interaction.text)
+				AddTextComponentString(config.interaction.text)
 				DrawText(_x, _y)
 			end
 		end
-	
 	
 		local function getClosestPed(coords, maxDistance)
 			local peds = GetGamePool('CPed')
@@ -302,18 +288,14 @@ CreateThread(function()
 					end
 				end
 			end
-		
 			return closestPed, closestCoords
 		end
 
-		
-		Citizen.CreateThread(function()
+	Citizen.CreateThread(function()
 			while true do
 				local closestPed, closestPedCoords = getClosestPed(GetEntityCoords(cache.ped), 2)
 				if closestPed ~= nil and can_ped_buy(closestPed) and does_have_drugs() then
 
-					
-	
 					while closestPed ~= nil and can_ped_buy(closestPed) do
 						drawPedText(closestPedCoords)
 						if IsControlJustPressed(1, 38) then 
@@ -329,4 +311,3 @@ CreateThread(function()
 		end)
 	end
 end)
-

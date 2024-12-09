@@ -1,0 +1,12 @@
+{
+    "master_selling" : "You have mastered drug selling",
+    
+    "no_police" : "Not enough Police to sell!",
+
+    "progress_label" : "Making a deal...",
+
+    "failed_sale" : "I don't want your drugs!",
+
+    "sale_amount" : "Sold x",
+    "sale_price" : " for $"
+}

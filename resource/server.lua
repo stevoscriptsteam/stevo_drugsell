@@ -1,3 +1,6 @@
+local config = lib.require('config')
+local stevo_lib = exports['stevo_lib']:import()
+
 local success, result = pcall(MySQL.scalar.await, 'SELECT 1 FROM stevo_drugsell_rep')
 
 if not success then
@@ -11,9 +14,6 @@ if not success then
     print('[Stevo Scripts] Deployed database table for stevo_drugsell')
 end
 
-
-local Config = lib.require('config')
-local stevo_lib = exports['stevo_lib']:import()
 
 function get_reputation(source)
     local identifier = stevo_lib.GetIdentifier(source)
@@ -31,6 +31,7 @@ function get_reputation(source)
         return row.rep
     end
 end
+
 
 function set_reputation(source, rep)
     local identifier = stevo_lib.GetIdentifier(source)
@@ -53,7 +54,7 @@ function set_reputation(source, rep)
         local old_level = nil
         local new_level = nil
     
-        for _, rep in ipairs(Config.reps) do
+        for _, rep in ipairs(config.reps) do
             if row.rep >= rep.min_reputation then
                 old_level = rep
             end
@@ -70,24 +71,27 @@ function set_reputation(source, rep)
     end
 end
 
+
 lib.callback.register('stevo_drugsell:sale', function(source, data)
 
     local police_multi = 0
 
-    if Config.police.require then 
-        local police_count = stevo_lib.GetJobCount(Config.police.job) 
+    if config.police.require then 
+        local police_count = stevo_lib.GetJobCount(source, config.police.job) 
 
-        if police_count < Config.police.required then return false end
+        if police_count < config.police.required then 
+            return false
+        end
 
-        local police_amount = Config.police.muli * data.amount
-        police_multi = Config.police.multi * police_amount
+        local police_amount = config.police.multi * data.amount
+        police_multi = config.police.multi * police_amount
     end
 
     local reputation = get_reputation(source)
 
     local reputation_multi = nil
 
-    for _, rep in ipairs(Config.reps) do
+    for _, rep in ipairs(config.reps) do
         if reputation >= rep.min_reputation then
             reputation_multi = rep.sale_multi * data.amount
         end
@@ -95,14 +99,14 @@ lib.callback.register('stevo_drugsell:sale', function(source, data)
 
     local final_amount = data.amount + police_multi + reputation_multi
 
-
     exports.ox_inventory:RemoveItem(source, data.item, data.count)
-    exports.ox_inventory:AddItem(source, Config.money_item, final_amount)
+    exports.ox_inventory:AddItem(source, config.money_item, final_amount)
 
     local level_up, current_reputation, msg = set_reputation(source, data.rep)
 
     return math.floor(final_amount), level_up, current_reputation, msg
 end)
+
 
 lib.callback.register('stevo_drugsell:getReputation', function(source)
     local name = stevo_lib.GetName(source)
@@ -110,9 +114,8 @@ lib.callback.register('stevo_drugsell:getReputation', function(source)
     return rep, name
 end)
 
+
 lib.callback.register('stevo_drugsell:setReputation', function(source, rep)
     local level_up, current_reputation, msg = set_reputation(source, rep)
     return level_up, current_reputation, msg
 end)
-
-

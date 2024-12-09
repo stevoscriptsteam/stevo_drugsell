@@ -11,9 +11,12 @@ shared_scripts {
   '@ox_lib/init.lua'
 }
 
+files {
+  'locales/*.json'
+}
+
 client_scripts {
   'resource/client.lua',
-
 }
 
 server_scripts {

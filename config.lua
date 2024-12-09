@@ -1,21 +1,37 @@
 return {
 
+    rep_command = 'checkrep', -- Command used to check your drugselling rep
     buyer_cooldown = 10000, -- Time in milliseconds until you can sell to the same ped. 1000 = 1 second.
     money_item = 'money',
 
+    interaction = { 
+        type = 'target', -- 'target' or '3dtext'
+
+        targetlabel = 'Sell Drugs',
+        targetradius = 3.0, 
+        targeticon = 'fas fa-cannabis', -- https://fontawesome.com/icons
+        targetdistance = 2.0,
+
+        text = '[~g~E~w~] Sell Drugs'
+    },
+
     police = {
-        callpoliceondeny = false, -- If police should be called if the ped runs away (You need to add your dispatch) in resource/client.lua - police_dispatch()
-        required = 1, -- Amount of cops required to sell drugs, set to false for no requirement.
+        callpoliceondeny = true, -- If police should be called if the ped runs away (You need to add your dispatch) in resource/client.lua - police_dispatch()
+        required = 3, -- Amount of cops required to sell drugs, set to false for no requirement.
         multi = 0.05, -- Multiplier applied to sale price per officer on.
         job = 'police', -- Police Job name
     },
     
-
-    drugs = { -- base_price = Base price for 1 drug : maxsale = max amount of items that can be sold at once : rep_sale = reputation received from sale of drug.
+    drugs = { -- base_price = Base price for 1 drug // maxsale = max amount of items that can be sold at once // rep_sale = reputation received from sale of drug.
         ['weed'] = {base_price = 200, max_sale = 2, rep_sale = 2},
         ['weed_brick'] = {base_price = 100, max_sale = 2, rep_sale = 1},
     },  
 
+    sellChance = {
+        max = 100,
+        min = 0,
+        chance = 50, 
+    },
 
     reps = {
         {
@@ -60,19 +76,4 @@ return {
             min_reputation = 500
         },
     },
-
-
-    interaction = { 
-        type = '3dtext', -- Supports: 'target' & '3dtext'
-
-
-        targetlabel = 'Sell Drugs',
-        targetradius = 3.0, 
-        targeticon = 'fas fa-cannabis', -- https://fontawesome.com/icons
-        targetdistance = 2.0,
-
-        text = '[~g~E~w~] Sell Drugs'
-    },
-
-    
 }
