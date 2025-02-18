@@ -177,11 +177,13 @@ end
 
 
 function attempt_sell(entity)
-
+    exports.ox_target:disableTargeting(true)
 	local buyer_ped = entity
 
 	local cooldown = Entity(buyer_ped).state.stevo_drugcooldown
-    if cooldown == true then return end
+    if cooldown == true then
+    exports.ox_target:disableTargeting(false)		
+    return end
 
 	ClearPedTasks(buyer_ped)
 
@@ -215,7 +217,7 @@ function attempt_sell(entity)
 		else
 			show_player_reputation(current_reputation)
 		end
-		
+		exports.ox_target:disableTargeting(false)
 		ped_cooldown(buyer_ped)
 
 	else
@@ -226,7 +228,7 @@ function attempt_sell(entity)
 		ped_cooldown(buyer_ped)
 		PlayPedAmbientSpeechNative(buyer_ped, "GENERIC_FRIGHTENED_HIGH", "SPEECH_PARAMS_FORCE_SHOUTED")
 		TaskSmartFleePed(buyer_ped, PlayerPedId(), 10000.0, -1)
-
+		exports.ox_target:disableTargeting(false)	
 		stevo_lib.Notify(locale('failed_sale'), 'error', 5000)
 	end
 end
