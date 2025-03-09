@@ -1,0 +1,12 @@
+{
+    "master_selling": "Uyuşturucu satışında ustalaştın",
+    
+    "no_police": "Satış yapmak için yeterli polis yok!",
+
+    "progress_label": "Anlaşma yapılıyor...",
+
+    "failed_sale": "Senin uyuşturucunu istemiyorum!",
+
+    "sale_amount": "Satıldı x",
+    "sale_price": " için $"
+}
